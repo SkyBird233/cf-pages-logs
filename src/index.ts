@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import Cloudflare from "cloudflare";
 import { env } from "cloudflare:workers";
-import { Layout, Index, ProjectDetail } from "./templates";
+import { Layout, Index, ProjectDetail, DeploymentDetails } from "./templates";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
 const client = new Cloudflare({ apiToken: env.CLOUDFLARE_API_TOKEN });
@@ -42,6 +42,31 @@ app.get("/", async (c) => {
         deployments: deploymentList,
       })
     )
+  );
+});
+
+app.get("/details", async (c) => {
+  const id = c.req.query("id");
+
+  if (!id) return c.text("Missing deployment ID", 400);
+
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(id)) return c.text("Invalid deployment ID format", 400);
+
+  const args = [
+    c.env.PROJECT_NAME,
+    id,
+    { account_id: c.env.CLOUDFLARE_ACCOUNT_ID },
+  ] as const;
+
+  const [deploymentInfo, deploymentLogs] = await Promise.all([
+    client.pages.projects.deployments.get(...args),
+    client.pages.projects.deployments.history.logs.get(...args),
+  ]);
+
+  return c.html(
+    DefaultLayout(DeploymentDetails(deploymentInfo, deploymentLogs))
   );
 });
 
