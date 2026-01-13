@@ -1,10 +1,7 @@
 import { html } from "hono/html";
 import type Cloudflare from "cloudflare";
 
-export const Layout = (props: {
-  title: string;
-  children?: any;
-}) => html`
+export const Layout = (props: { title: string; children?: any }) => html`
   <!DOCTYPE html>
   <html>
     <head>
@@ -14,6 +11,19 @@ export const Layout = (props: {
     </head>
     <body>
       ${props.children}
+      <hr />
+      <footer>
+        <small>
+          View source on
+          <a
+            href="https://github.com/SkyBird233/cf-pages-logs"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+        </small>
+      </footer>
     </body>
   </html>
 `;
