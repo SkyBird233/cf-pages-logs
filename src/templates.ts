@@ -3,7 +3,6 @@ import type Cloudflare from "cloudflare";
 
 export const Layout = (props: {
   title: string;
-  description: string;
   children?: any;
 }) => html`
   <!DOCTYPE html>

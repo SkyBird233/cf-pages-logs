@@ -8,15 +8,15 @@ const client = new Cloudflare({ apiToken: env.CLOUDFLARE_API_TOKEN });
 
 const DefaultLayout = (children?: any) =>
   Layout({
-    title: env.PROJECT_NAME,
-    description: env.PROJECT_DESCRIPTION,
+    title: env.SITE_TITLE,
     children: children,
   });
 
 app.get("/", async (c) => {
-  const projectInfo = await client.pages.projects.get(c.env.PROJECT_NAME, {
-    account_id: c.env.CLOUDFLARE_ACCOUNT_ID,
-  });
+  const projectInfo = await client.pages.projects.get(
+    c.env.CLOUDFLARE_PROJECT_NAME,
+    { account_id: c.env.CLOUDFLARE_ACCOUNT_ID }
+  );
 
   const deploymentList: {
     production: Cloudflare.Pages.Projects.Deployment[];
@@ -25,7 +25,7 @@ app.get("/", async (c) => {
 
   for (const environment of ["production", "preview"] as const) {
     deploymentList[environment] = await client.pages.projects.deployments
-      .list(c.env.PROJECT_NAME, {
+      .list(c.env.CLOUDFLARE_PROJECT_NAME, {
         account_id: c.env.CLOUDFLARE_ACCOUNT_ID,
         env: environment,
         // @ts-expect-error - per_page exists in API but not in types in cloudflare@5.2.0
@@ -37,7 +37,7 @@ app.get("/", async (c) => {
   return c.html(
     DefaultLayout(
       Index({
-        siteName: c.env.PROJECT_NAME,
+        siteName: c.env.SITE_TITLE,
         details: ProjectDetail(projectInfo),
         deployments: deploymentList,
       })
@@ -55,7 +55,7 @@ app.get("/details", async (c) => {
   if (!uuidRegex.test(id)) return c.text("Invalid deployment ID format", 400);
 
   const args = [
-    c.env.PROJECT_NAME,
+    c.env.CLOUDFLARE_PROJECT_NAME,
     id,
     { account_id: c.env.CLOUDFLARE_ACCOUNT_ID },
   ] as const;

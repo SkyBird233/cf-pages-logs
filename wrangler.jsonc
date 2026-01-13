@@ -3,7 +3,4 @@
   "name": "cf-pages-logs",
   "main": "src/index.ts",
   "compatibility_date": "2026-01-11"
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
 }
