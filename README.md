@@ -10,9 +10,9 @@ pnpm install
 
 Configure the following environment variables:
 
-- `CLOUDFLARE_API_TOKEN`: Cloudflare API token (with `Pages Read` permission)
-- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account ID
-- `CLOUDFLARE_PROJECT_NAME`: Cloudflare Pages project name
+- `CF_API_TOKEN`: Cloudflare API token (with `Pages Read` permission)
+- `CF_ACCOUNT_ID`: Cloudflare account ID
+- `CF_PROJECT_NAME`: Cloudflare Pages project name
 - `SITE_TITLE`: Title for the site
 
 ## Development

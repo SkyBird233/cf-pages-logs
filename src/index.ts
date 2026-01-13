@@ -4,7 +4,7 @@ import { env } from "cloudflare:workers";
 import { Layout, Index, ProjectDetail, DeploymentDetails } from "./templates";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
-const client = new Cloudflare({ apiToken: env.CLOUDFLARE_API_TOKEN });
+const client = new Cloudflare({ apiToken: env.CF_API_TOKEN });
 
 const DefaultLayout = (children?: any) =>
   Layout({
@@ -14,8 +14,8 @@ const DefaultLayout = (children?: any) =>
 
 app.get("/", async (c) => {
   const projectInfo = await client.pages.projects.get(
-    c.env.CLOUDFLARE_PROJECT_NAME,
-    { account_id: c.env.CLOUDFLARE_ACCOUNT_ID }
+    c.env.CF_PROJECT_NAME,
+    { account_id: c.env.CF_ACCOUNT_ID }
   );
 
   const deploymentList: {
@@ -25,8 +25,8 @@ app.get("/", async (c) => {
 
   for (const environment of ["production", "preview"] as const) {
     deploymentList[environment] = await client.pages.projects.deployments
-      .list(c.env.CLOUDFLARE_PROJECT_NAME, {
-        account_id: c.env.CLOUDFLARE_ACCOUNT_ID,
+      .list(c.env.CF_PROJECT_NAME, {
+        account_id: c.env.CF_ACCOUNT_ID,
         env: environment,
         // @ts-expect-error - per_page exists in API but not in types in cloudflare@5.2.0
         per_page: environment === "production" ? 3 : 10,
@@ -55,9 +55,9 @@ app.get("/details", async (c) => {
   if (!uuidRegex.test(id)) return c.text("Invalid deployment ID format", 400);
 
   const args = [
-    c.env.CLOUDFLARE_PROJECT_NAME,
+    c.env.CF_PROJECT_NAME,
     id,
-    { account_id: c.env.CLOUDFLARE_ACCOUNT_ID },
+    { account_id: c.env.CF_ACCOUNT_ID },
   ] as const;
 
   const [deploymentInfo, deploymentLogs] = await Promise.all([
