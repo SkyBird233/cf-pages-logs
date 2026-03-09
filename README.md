@@ -40,3 +40,9 @@ projects I'm working on, so I made this.
 
 This project uses zero CSS because I think there's no significant necessity
 styling it. I may try to style it like Cloudflare's dashboard in the future.
+
+### Why are there at most 1000 lines of logs?
+
+This is an undocumented limitation of the Cloudflare API:
+[Get Deployment Logs](https://developers.cloudflare.com/api/resources/pages/subresources/projects/subresources/deployments/subresources/history/subresources/logs/).
+There is no pagination option for it, and I have no idea how to bypass it for now.
